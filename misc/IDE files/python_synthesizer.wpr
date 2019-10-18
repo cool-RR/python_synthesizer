@@ -1,0 +1,48 @@
+#!wing
+#!version=7.0
+##################################################################
+# Wing project file                                              #
+##################################################################
+[project attributes]
+debug.launch-configs = (2,
+                        {'launch-NKQAnPWZ0XaMQEYg': ({},
+        {'buildcmd': ('project',
+                      None),
+         'env': ('project',
+                 [u'']),
+         'name': 'foo',
+         'pyexec': ('custom',
+                    u'c:\\Users\\Administrator\\Dropbox\\Desktop\\local\\foo\\Scripts\\python.exe'),
+         'pypath': ('project',
+                    []),
+         'pyrunargs': ('project',
+                       '-u'),
+         'runargs': u'install',
+         'rundir': ('project',
+                    u'')})})
+proj.directory-list = [{'dirloc': loc('../..'),
+                        'excludes': [u'synthesizer.egg-info',
+                                     u'dist',
+                                     u'build'],
+                        'filter': '*',
+                        'include_hidden': False,
+                        'recursive': True,
+                        'watch_for_changes': True}]
+proj.file-type = 'shared'
+proj.home-dir = loc('../..')
+proj.launch-config = {loc('../../../../../../../Program Files/Python37/Scripts/pasteurize-script.py'): ('p'\
+        'roject',
+        (u'"c:\\Users\\Administrator\\Documents\\Python Projects\\PySnooper\\pysnooper" "c:\\Users\\Administrator\\Documents\\Python Projects\\PySnooper\\tests"',
+         '')),
+                      loc('../../../../../Dropbox/Desktop/local/foo/tits/numpy-1.17.0/setup.py'): ('c'\
+        'ustom',
+        (u'install',
+         'launch-NKQAnPWZ0XaMQEYg')),
+                      loc('../../../../../Dropbox/Scripts and shortcuts/_simplify3d_add_m600.py'): ('p'\
+        'roject',
+        (u'"C:\\Users\\Administrator\\Dropbox\\Desktop\\foo.gcode"',
+         ''))}
+proj.main-file = loc('../../synthesizer.py')
+testing.auto-test-file-specs = (('regex',
+                                 'pysnooper/tests.*/test[^./]*.py.?$'),)
+testing.test-framework = {None: ':internal pytest'}
