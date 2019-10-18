@@ -14,7 +14,10 @@ HALF_LIFE = 0.3
 
 def sine(t):
     volume = MASTER_VOLUME * 2 ** (-t / HALF_LIFE)
-    return volume * math.sin(math.tau * t * FREQUENCY)
+    result = 0
+    for i in range(1, 8):
+        result += math.sin(math.tau * t * FREQUENCY * i)
+    return volume * result
 
 
 time_array = np.linspace(0, DURATION, DURATION * SAMPLERATE)
@@ -23,8 +26,8 @@ pressure_array = np.zeros(time_array.shape, dtype='d')
 for i, t in enumerate(time_array):
     pressure_array[i] = sine(t.item())
 
-# plt.plot(pressure_array[:60])
-# plt.show()
+plt.plot(pressure_array[:60])
+plt.show()
 
 sounddevice.play(pressure_array, samplerate=SAMPLERATE, blocking=True)
 
