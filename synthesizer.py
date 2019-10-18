@@ -3,6 +3,7 @@ import math
 
 import numpy as np
 import matplotlib.pyplot as plt
+import sounddevice
 
 DURATION = 2
 SAMPLERATE = 8000
@@ -19,6 +20,8 @@ pressure_array = np.zeros(time_array.shape, dtype='d')
 for i, t in enumerate(time_array):
     pressure_array[i] = sine(t.item())
 
-plt.plot(pressure_array[:60])
-plt.show()
+# plt.plot(pressure_array[:60])
+# plt.show()
+
+sounddevice.play(pressure_array, samplerate=SAMPLERATE, blocking=True)
 
