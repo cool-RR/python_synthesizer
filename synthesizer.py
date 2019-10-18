@@ -9,9 +9,12 @@ DURATION = 2
 SAMPLERATE = 8000
 FREQUENCY = 440
 MASTER_VOLUME = 0.2
+HALF_LIFE = 0.3
+
 
 def sine(t):
-    return MASTER_VOLUME * math.sin(math.tau * t * FREQUENCY)
+    volume = MASTER_VOLUME * 2 ** (-t / HALF_LIFE)
+    return volume * math.sin(math.tau * t * FREQUENCY)
 
 
 time_array = np.linspace(0, DURATION, DURATION * SAMPLERATE)
