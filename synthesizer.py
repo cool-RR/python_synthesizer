@@ -6,7 +6,7 @@ import threading
 import numpy as np
 import matplotlib.pyplot as plt
 import sounddevice
-
+import mido
 
 MASTER_VOLUME = 0.1
 
@@ -67,9 +67,38 @@ class Sequence(Audio):
 
 
 
+class MidiSequence(Sequence):
+    tempo = None
+
+    def __init__(self, path):
+        self.midi = mido.MidiFile(path)
+
+        members = []
+
+        meta_track, track, *_ = self.midi.tracks
+
+        tempo_messages = [message for message in meta_track if
+                          message.type == 'set_tempo']
+        self.tempo = tempo_messages[0].tempo
+
+        current_time = 0
+        for message in track:
+            if message.type not in {'note_on', 'note_off'}:
+                continue
+            time_interval = mido.tick2second(
+                message.time, self.midi.ticks_per_beat, self.tempo)
+            current_time += time_interval
+            members.append((
+                current_time,
+                Note(
+                    220 * 2 ** ((message.note - 57) / 12),
+                    message.velocity / 127
+                )
+            ))
+
+        Sequence.__init__(self, members)
+
+
 if __name__ == '__main__':
-    sequence = Sequence((
-        (0.1 * i, Note(440 * 2 ** (random.choice((0, 4, 7, 12)) / 12)))
-        for i in range(100)
-    ))
-    sequence.play()
+    midi_sequence = MidiSequence('FurElise.mid')
+    midi_sequence.play()
