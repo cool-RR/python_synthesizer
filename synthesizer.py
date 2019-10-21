@@ -1,5 +1,6 @@
 #!python3
 import math
+import random
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -51,10 +52,7 @@ class Sequence(Audio):
 
 if __name__ == '__main__':
     sequence = Sequence((
-        (0.0, Note(440 * 2 ** (0 / 12))),
-        (0.2, Note(440 * 2 ** (4 / 12))),
-        (0.4, Note(440 * 2 ** (7 / 12))),
-        (0.6, Note(440 * 2 ** (4 / 12))),
-        (0.8, Note(440 * 2 ** (12 / 12))),
+        (0.3 * i, Note(440 * 2 ** (random.choice((0, 4, 7, 12)) / 12)))
+        for i in range(100)
     ))
     sequence.play()
