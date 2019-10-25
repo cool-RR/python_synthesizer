@@ -1,4 +1,4 @@
-#!python3
+#!pypy3
 import math
 import random
 import threading
@@ -69,7 +69,7 @@ class Sequence(Audio):
 
 if __name__ == '__main__':
     sequence = Sequence((
-        (0.3 * i, Note(440 * 2 ** (random.choice((0, 4, 7, 12)) / 12)))
+        (0.1 * i, Note(440 * 2 ** (random.choice((0, 4, 7, 12)) / 12)))
         for i in range(100)
     ))
     sequence.play()
