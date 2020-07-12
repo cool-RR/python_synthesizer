@@ -15,9 +15,9 @@ class Audio:
     def play(self, samplerate=8000):
         time_array = np.arange(0, self.length, 1 / samplerate)
         pressure_array = np.zeros_like(time_array)
+        sounddevice.play(pressure_array, samplerate=samplerate)
         for i, t in enumerate(time_array):
             pressure_array[i] = self.get_pressure(t.item())
-        sounddevice.play(pressure_array, samplerate=samplerate)
         sounddevice.wait()
 
 class Note(Audio):
