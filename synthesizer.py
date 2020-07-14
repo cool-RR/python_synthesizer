@@ -8,16 +8,18 @@ import sounddevice
 
 MASTER_VOLUME = 0.1
 HALF_LIFE = 0.3
+INITIAL_DELAY = 0.2
 
 overtones = {i: 1 / (i ** 1.5) for i in range(1, 8)}
 
 class Audio:
     def play(self, samplerate=8000):
+        n_delay_samples = int(INITIAL_DELAY * samplerate)
         time_array = np.linspace(0, self.length,
                                  int(self.length * samplerate))
-        pressure_array = np.zeros_like(time_array)
+        pressure_array = np.zeros(n_delay_samples + len(time_array))
         sounddevice.play(pressure_array, samplerate=samplerate)
-        for i, t in enumerate(time_array):
+        for i, t in enumerate(time_array, start=n_delay_samples):
             pressure_array[i] = self.get_pressure(t.item())
         sounddevice.wait()
 
