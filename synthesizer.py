@@ -8,16 +8,19 @@ import mido
 
 MASTER_VOLUME = 0.1
 
+delay_seconds = 0.2
+
 
 class Audio:
     def play(self, samplerate=8000):
+        delay = int(delay_seconds * samplerate)
         time_array = np.linspace(0, self.length,
                                  int(self.length * samplerate))
-        pressure_array = np.zeros(time_array.shape, dtype='d')
+        pressure_array = np.zeros(len(time_array) + delay, dtype='d')
 
         sounddevice.play(pressure_array, samplerate=samplerate)
 
-        for i, t in enumerate(time_array):
+        for i, t in enumerate(time_array, start=delay):
             pressure_array[i] = self.get_pressure(t.item())
 
         sounddevice.wait()
