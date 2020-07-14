@@ -1,7 +1,6 @@
 #!pypy3
 import math
 import random
-import threading
 
 import numpy as np
 import sounddevice
@@ -16,18 +15,12 @@ class Audio:
                                  int(self.length * samplerate))
         pressure_array = np.zeros(time_array.shape, dtype='d')
 
-        playing_thread = threading.Thread(
-            target=lambda: sounddevice.play(
-                pressure_array, samplerate=samplerate, blocking=True
-            ),
-            daemon=True
-        )
-        playing_thread.start()
+        sounddevice.play(pressure_array, samplerate=samplerate)
 
         for i, t in enumerate(time_array):
             pressure_array[i] = self.get_pressure(t.item())
 
-        playing_thread.join()
+        sounddevice.wait()
 
 
 class Note(Audio):
