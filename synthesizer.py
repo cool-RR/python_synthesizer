@@ -4,7 +4,6 @@ import random
 import threading
 
 import numpy as np
-import matplotlib.pyplot as plt
 import sounddevice
 import mido
 
