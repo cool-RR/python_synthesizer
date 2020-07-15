@@ -11,4 +11,8 @@ Copyright (c) 2019 Ram Rachum, released under the MIT license.
 I give [Python workshops](http://pythonworkshops.co/) to teach people
 Python and related topics.
 
+
+Copyright information
+---------------------
+
 FurElise.mid, copyright Yassiiiiine, license CC-ASA 4 International, URL: https://commons.wikimedia.org/wiki/File:Für_Elise_(1810),_composed_by_Ludwig_van_Beethoven_-_piano_music.mid

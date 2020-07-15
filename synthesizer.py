@@ -5,8 +5,10 @@ import random
 import numpy as np
 import matplotlib.pyplot as plt
 import sounddevice
+import mido
 
-MASTER_VOLUME = 0.02
+
+MASTER_VOLUME = 0.01
 HALF_LIFE = 0.3
 INITIAL_DELAY = 0.2
 
@@ -51,9 +53,26 @@ class Sequence(Audio):
                    self.offsets_and_notes)
 
 
+class MidiSequence(Sequence):
+    def __init__(self, path):
+        offsets_and_notes = []
+
+        current_time = 0
+        for message in mido.MidiFile(path):
+            current_time += message.time
+            if message.type != 'note_on':
+                continue
+            offsets_and_notes.append((
+                current_time,
+                Note(
+                    440 * 2 ** ((message.note - 69) / 12),
+                    message.velocity / 127
+                )
+            ))
+
+        Sequence.__init__(self, offsets_and_notes)
+
+
 if __name__ == '__main__':
-    sequence = Sequence((
-        (0.1 * i, Note(440 * 2 ** (random.choice((0, 4, 7, 12)) / 12)))
-        for i in range(100)
-    ))
-    sequence.play()
+    midi_sequence = MidiSequence('FurElise.mid')
+    midi_sequence.play()
