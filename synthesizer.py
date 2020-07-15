@@ -11,18 +11,20 @@ import mido
 MASTER_VOLUME = 0.05
 HALF_LIFE = 0.3
 INITIAL_DELAY = 0.2
+SAMPLERATE = 32_000
 
 overtones = {i: 1 / (i ** 1.5) for i in range(1, 8)}
 
 class Audio:
-    def play(self, samplerate=8000):
-        n_delay_samples = int(INITIAL_DELAY * samplerate)
+    def play(self):
+        self.n_delay_samples = int(INITIAL_DELAY * SAMPLERATE)
         time_array = np.linspace(0, self.length,
-                                 int(self.length * samplerate))
-        pressure_array = np.zeros(n_delay_samples + len(time_array))
-        sounddevice.play(pressure_array, samplerate=samplerate)
-        for i, t in enumerate(time_array, start=n_delay_samples):
-            pressure_array[i] = self.get_pressure(t.item())
+                                 int(self.length * SAMPLERATE))
+        self.pressure_array = np.zeros(
+            self.n_delay_samples + len(time_array)
+        )
+        sounddevice.play(self.pressure_array, samplerate=SAMPLERATE)
+        self.update_pressure()
         sounddevice.wait()
 
 class Note(Audio):
@@ -31,17 +33,14 @@ class Note(Audio):
         self.volume = volume
         self.length = 1.5
 
-    def get_pressure(self, t):
-        if 0 <= t <= self.length:
-            result = 0
-            for overtone, overtone_volume in overtones.items():
-                result += overtone_volume * math.sin(
-                    math.tau * t * self.frequency * overtone
-                )
-            volume = MASTER_VOLUME * self.volume * 2 ** (-t / HALF_LIFE)
-            return result * volume
-        else:
-            return 0
+    def get_pressure(self):
+        t = np.arange(int(self.length * SAMPLERATE)) / SAMPLERATE
+        result = sum(
+            overtone_volume * np.sin(2 * np.pi * t * self.frequency * overtone)
+            for overtone, overtone_volume in overtones.items())
+        volume = (MASTER_VOLUME * self.volume * 2 ** (-t / HALF_LIFE))
+        return result * volume
+
 
 class Sequence(Audio):
     def __init__(self, offsets_and_notes):
@@ -49,10 +48,17 @@ class Sequence(Audio):
         self.length = max(offset + note.length for offset, note
                           in self.offsets_and_notes)
 
-    def get_pressure(self, t):
-        return sum(note.get_pressure(t - offset) for offset, note in
-                   self.offsets_and_notes)
+    def __init__(self, offsets_and_notes):
+        self.offsets_and_notes = tuple(offsets_and_notes)
+        self.length = max(
+            offset + note.length for offset, note in self.offsets_and_notes
+        )
 
+    def update_pressure(self):
+        for offset, note in self.offsets_and_notes:
+            pressure = note.get_pressure()
+            offset = int(offset * SAMPLERATE) + self.n_delay_samples
+            self.pressure_array[offset : offset + len(pressure)] += pressure
 
 class MidiSequence(Sequence):
     def __init__(self, path):
